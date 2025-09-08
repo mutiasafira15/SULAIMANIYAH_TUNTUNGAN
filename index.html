@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Takip Linkleri</title>
+    <style>
+      :root {
+        --blue-1: #1a73e8;
+        --blue-2: #0a58ca;
+        --bg: #eef2f7;
+        --card: #ffffff;
+        --muted: #6b7280;
+        --line: #e5e7eb;
+        --ink: #111827;
+        --ink-2: #374151;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: Inter, Segoe UI, Arial, sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+      }
+      /* Header */
+      .header {
+        background: linear-gradient(135deg, var(--blue-1), var(--blue-2));
+        color: #fff;
+        padding: 24px 16px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 20px;
+        line-height: 1.3;
+        letter-spacing: 0.3px;
+        border-bottom-left-radius: 16px;
+        border-bottom-right-radius: 16px;
+        box-shadow: 0 8px 24px rgba(10, 88, 202, 0.25) inset;
+      }
+      .sub {
+        margin-top: 6px;
+        font-weight: 500;
+        opacity: 0.9;
+        font-size: 14px;
+      }
+
+      /* Top actions */
+      .topbar {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        padding: 16px;
+      }
+      .btn {
+        border: 0;
+        border-radius: 10px;
+        padding: 9px 14px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 14px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        transition: transform 0.03s ease;
+      }
+      .btn:active {
+        transform: translateY(1px);
+      }
+      .btn-blue {
+        background: var(--blue-1);
+        color: #fff;
+      }
+      .btn-green {
+        background: #22c55e;
+        color: #fff;
+      }
+      .btn-purple {
+        background: #7c3aed;
+        color: #fff;
+      }
+      .btn-gray {
+        background: #374151;
+        color: #fff;
+      }
+
+      /* Sections */
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 16px 32px;
+      }
+      .section {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 16px 16px 14px;
+        margin: 16px 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+      }
+      .section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f3f4f6;
+        margin-bottom: 14px;
+      }
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--ink-2);
+      }
+      .badge {
+        background: #e5f0ff;
+        color: var(--blue-2);
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      /* Links grid */
+      .links {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 12px;
+      }
+      .card {
+        position: relative;
+        background: #f9fbfd;
+        border: 1px solid #e3e7ed;
+        border-radius: 12px;
+        padding: 12px;
+      }
+      .card a {
+        text-decoration: none;
+        color: var(--blue-1);
+        font-weight: 800;
+        word-break: break-word;
+      }
+      .desc {
+        font-size: 13px;
+        color: #4b5563;
+        margin-top: 4px;
+      }
+      .card-actions {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        display: flex;
+        gap: 6px;
+      }
+      .icon {
+        background: transparent;
+        border: 0;
+        cursor: pointer;
+        font-size: 16px;
+        color: #6b7280;
+      }
+      .icon:hover {
+        color: #111827;
+      }
+
+      .add-link-section {
+        margin-top: 12px;
+        display: inline-flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .add-link-btn {
+        border: 0;
+        border-radius: 8px;
+        padding: 7px 10px;
+        background: var(--blue-1);
+        color: #fff;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 13px;
+      }
+
+      /* Modal */
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.35);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 50;
+      }
+      .modal {
+        width: 100%;
+        max-width: 520px;
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+      }
+      .modal header {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--line);
+        font-weight: 800;
+      }
+      .modal .body {
+        padding: 16px;
+      }
+      .modal .row {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 12px;
+      }
+      .modal label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #374151;
+      }
+      .modal input,
+      .modal select,
+      .modal textarea {
+        padding: 10px 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 14px;
+        width: 100%;
+        outline: none;
+      }
+      .modal textarea {
+        min-height: 84px;
+        resize: vertical;
+      }
+      .modal footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 12px 16px;
+        border-top: 1px solid var(--line);
+        background: #fafafa;
+      }
+      .btn-ghost {
+        background: #f3f4f6;
+        color: #111827;
+      }
+      .hint {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 2px;
+      }
+
+      /* Helpers */
+      .empty {
+        border: 2px dashed #e5e7eb;
+        border-radius: 12px;
+        padding: 18px;
+        text-align: center;
+        color: #6b7280;
+        font-size: 14px;
+      }
+      @media (max-width: 420px) {
+        .header {
+          font-size: 18px;
+        }
+        .topbar {
+          padding: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      SULAMANIYAH HAJI ANIF TUNTUNGAN YURDU TAKİP LİNKLERİ
+      <div class="sub">
+        Merkez bağlantılar – Sekreterya • Mali İşler • Resmi İşler • Irşadi
+      </div>
+    </div>
+
+    <div class="topbar">
+      <button class="btn btn-blue" id="btnAddLinkTop">+ Tambah Link</button>
+      <button class="btn btn-green" id="btnAddSection">+ Tambah Bagian</button>
+      <button class="btn btn-purple" id="btnExport" style="display: none;">Ekspor Data</button>
+      <button class="btn btn-gray" id="btnShare" style="display: none;">Bagikan (lihat saja)</button>
+    </div>
+
+    <div class="wrap" id="wrap"></div>
+
+    <!-- Modal: Tambah Link -->
+    <div class="modal-backdrop" id="modalLink">
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ml-title"
+      >
+        <header id="ml-title">Tambah Link</header>
+        <form class="body" id="formLink">
+          <div class="row">
+            <label for="ml-section">Pilih Bagian</label>
+            <select id="ml-section" required></select>
+          </div>
+          <div class="row">
+            <label for="ml-title-input">Judul Link</label>
+            <input
+              id="ml-title-input"
+              placeholder="Mis. YILLIK İZİN TAKİP LİNKİ"
+              required
+            />
+          </div>
+          <div class="row">
+            <label for="ml-desc">Deskripsi</label>
+            <textarea id="ml-desc" placeholder="Keterangan singkat…"></textarea>
+          </div>
+          <div class="row">
+            <label for="ml-url">URL</label>
+            <input id="ml-url" type="url" placeholder="https://…" required />
+            <div class="hint">Gunakan URL lengkap (termasuk http/https).</div>
+          </div>
+          <footer>
+            <button type="button" class="btn btn-ghost" id="ml-cancel">
+              Batal
+            </button>
+            <button type="submit" class="btn btn-blue">Simpan</button>
+          </footer>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal placeholder: Tambah Bagian (UI saja; butuh endpoint backend) -->
+    <div class="modal-backdrop" id="modalSection">
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ms-title"
+      >
+        <header id="ms-title">Tambah Bagian</header>
+        <form class="body" id="formSection">
+          <div class="row">
+            <label for="ms-name">Nama Bagian</label>
+            <input id="ms-name" placeholder="Mis. SEKRETERYA BİRİMİ" required />
+          </div>
+          <footer>
+            <button type="button" class="btn btn-ghost" id="ms-cancel">
+              Batal
+            </button>
+            <button type="submit" class="btn btn-green">Simpan</button>
+          </footer>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const API = "http://localhost:3000";
+      const wrap = document.getElementById("wrap");
+
+      // ---- Util modal
+      function openModal(el) {
+        el.style.display = "flex";
+      }
+      function closeModal(el) {
+        el.style.display = "none";
+      }
+
+      // ---- State
+      let sections = [];
+      let editingLinkId = null; // track kalau sedang edit
+
+      // ---- Fetch & render
+      async function loadSections() {
+        const r = await fetch(API + "/sections");
+        sections = await r.json();
+        render();
+        fillSelectSections();
+      }
+
+      function render() {
+        wrap.innerHTML = "";
+        if (!sections.length) {
+          const empty = document.createElement("div");
+          empty.className = "empty";
+          empty.innerText = "Belum ada bagian. Klik “+ Tambah Bagian”.";
+          wrap.appendChild(empty);
+          return;
+        }
+
+        sections.forEach((sec) => {
+          const box = document.createElement("div");
+          box.className = "section";
+
+          const linksCount = (sec.links || []).length;
+          box.innerHTML = `
+        <div class="section-head">
+          <div class="section-title">📁 ${sec.name} <span class="badge">${linksCount}</span></div>
+        </div>
+        <div class="links"></div>
+        <div class="add-link-section">
+          <button class="add-link-btn" data-sec="${sec.id}">+ Tambah Link</button>
+        </div>
+      `;
+
+          const grid = box.querySelector(".links");
+          if (!linksCount) {
+            const empty = document.createElement("div");
+            empty.className = "empty";
+            empty.textContent = "Belum ada link di bagian ini.";
+            grid.appendChild(empty);
+          } else {
+            sec.links.forEach((l) => {
+              const card = document.createElement("div");
+              card.className = "card";
+              card.innerHTML = `
+            <div class="card-actions">
+              <button class="icon" title="Edit" data-edit="${l.id}">✏️</button>
+              <button class="icon" title="Hapus" data-del="${l.id}">🗑️</button>
+            </div>
+            <a href="${l.url}" target="_blank" rel="noopener">${l.title}</a>
+            <div class="desc">${l.description || ""}</div>
+          `;
+              grid.appendChild(card);
+            });
+          }
+
+          wrap.appendChild(box);
+        });
+
+        // Wire add-link per-section
+        document.querySelectorAll(".add-link-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const secId = btn.getAttribute("data-sec");
+            openAddLinkForSection(secId);
+          });
+        });
+
+        // ---- EDIT
+        document.querySelectorAll("[data-edit]").forEach((b) => {
+          b.addEventListener("click", () => {
+            const id = b.getAttribute("data-edit");
+            const sec = sections.find((s) => s.links.some((l) => l.id == id));
+            const link = sec?.links.find((l) => l.id == id);
+            if (!link) return;
+
+            editingLinkId = id;
+            openModal(modalLink);
+            fillSelectSections();
+            document.getElementById("ml-section").value = sec.id;
+            document.getElementById("ml-title-input").value = link.title;
+            document.getElementById("ml-desc").value = link.description || "";
+            document.getElementById("ml-url").value = link.url;
+          });
+        });
+
+        // ---- DELETE
+        document.querySelectorAll("[data-del]").forEach((b) => {
+          b.addEventListener("click", async () => {
+            const id = b.getAttribute("data-del");
+            if (confirm("Yakin ingin menghapus link ini?")) {
+              const r = await fetch(API + "/links/" + id, { method: "DELETE" });
+              if (r.ok) {
+                await loadSections();
+              } else {
+                alert("Gagal menghapus link.");
+              }
+            }
+          });
+        });
+      }
+
+      function fillSelectSections() {
+        const sel = document.getElementById("ml-section");
+        sel.innerHTML = sections
+          .map((s) => `<option value="${s.id}">${s.name}</option>`)
+          .join("");
+      }
+
+      // ---- Modal: Tambah/Edit Link
+      const modalLink = document.getElementById("modalLink");
+      document.getElementById("btnAddLinkTop").addEventListener("click", () => {
+        openAddLinkForSection(sections[0]?.id);
+      });
+      function openAddLinkForSection(secId) {
+        editingLinkId = null; // reset ke mode tambah
+        document.getElementById("formLink").reset();
+        openModal(modalLink);
+        fillSelectSections();
+        if (secId) {
+          document.getElementById("ml-section").value = String(secId);
+        }
+      }
+      document
+        .getElementById("ml-cancel")
+        .addEventListener("click", () => closeModal(modalLink));
+      document
+        .getElementById("formLink")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const payload = {
+            section_id: Number(document.getElementById("ml-section").value),
+            title: document.getElementById("ml-title-input").value.trim(),
+            description: document.getElementById("ml-desc").value.trim(),
+            url: document.getElementById("ml-url").value.trim(),
+          };
+          if (!payload.title || !payload.url) {
+            return;
+          }
+
+          if (editingLinkId) {
+            // PUT /links/:id
+            const r = await fetch(API + "/links/" + editingLinkId, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+            if (!r.ok) {
+              alert("Gagal update link.");
+              return;
+            }
+          } else {
+            // POST /links
+            const r = await fetch(API + "/links", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+            if (!r.ok) {
+              alert("Gagal menyimpan link.");
+              return;
+            }
+          }
+
+          closeModal(modalLink);
+          editingLinkId = null;
+          await loadSections();
+        });
+
+      // ---- Modal: Tambah Bagian
+      const modalSection = document.getElementById("modalSection");
+      document
+        .getElementById("btnAddSection")
+        .addEventListener("click", () => openModal(modalSection));
+      document
+        .getElementById("ms-cancel")
+        .addEventListener("click", () => closeModal(modalSection));
+      document
+        .getElementById("formSection")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const name = document.getElementById("ms-name").value.trim();
+          if (!name) return;
+          const r = await fetch(API + "/sections", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name }),
+          });
+          if (r.ok) {
+            closeModal(modalSection);
+            document.getElementById("ms-name").value = "";
+            await loadSections();
+          } else {
+            alert("Gagal menambah bagian.");
+          }
+        });
+
+      // ---- Export & Share
+      document
+        .getElementById("btnExport")
+        .addEventListener("click", async () => {
+          const data = JSON.stringify(sections, null, 2);
+          const blob = new Blob([data], { type: "application/json" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "link_tracker_export.json";
+          a.click();
+          URL.revokeObjectURL(url);
+        });
+
+      document.getElementById("btnShare").addEventListener("click", () => {
+        navigator.clipboard.writeText(location.href).then(() => {
+          alert("Tautan disalin ke clipboard.");
+        });
+      });
+
+      // Go!
+      loadSections().catch(() => {
+        wrap.innerHTML = `
+      <div class="empty">
+        Gagal memuat data. Pastikan server Node.js jalan di <strong>http://localhost:3000</strong>
+        dan endpoint <code>/sections</code> aktif.
+      </div>`;
+      });
+    </script>
+  </body>
+</html>
