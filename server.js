@@ -1,4 +1,6 @@
 // server.js
+require("dotenv").config(); // ⬅️ aktifkan dukungan .env
+
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
@@ -8,12 +10,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🔧 sesuaikan dengan koneksi MySQL-mu
+// 🌐 Gunakan environment variable (.env) agar bisa jalan di Railway & lokal
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "", // ganti dengan password MySQL kamu
-  database: "link_tracker"
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "",
+  database: process.env.DB_NAME || "link_tracker",
+  port: process.env.DB_PORT || 3306,
 });
 
 db.connect(err => {
@@ -106,7 +109,7 @@ app.put("/links/:id", (req, res) => {
   db.query(
     "UPDATE links SET title=?, description=?, url=? WHERE id=?",
     [title, description, url, id],
-    (err, result) => {
+    (err) => {
       if (err) return res.status(500).send(err);
       res.json({ success: true });
     }
@@ -116,14 +119,14 @@ app.put("/links/:id", (req, res) => {
 // 5. Hapus link
 app.delete("/links/:id", (req, res) => {
   const { id } = req.params;
-  db.query("DELETE FROM links WHERE id=?", [id], (err, result) => {
+  db.query("DELETE FROM links WHERE id=?", [id], (err) => {
     if (err) return res.status(500).send(err);
     res.json({ success: true });
   });
 });
 
 // ---- start server ----
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server jalan di http://localhost:${PORT}`);
+  console.log(`🚀 Server jalan di port ${PORT}`);
 });
